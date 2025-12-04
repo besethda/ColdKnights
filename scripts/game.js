@@ -46,7 +46,9 @@ const makeClock = () => {
   }, 1000)
 }
 
-function 
+function Player(y, x, w, h, jumping) {
+  this.y = 
+}
 
 makeClock()
 createGround('.blocks')
