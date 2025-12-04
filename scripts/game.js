@@ -48,12 +48,59 @@ const makeClock = () => {
   }, 1000)
 }
 
+const checkForCollision = () => {
+  let playerBox = p.p[0].getBoundingClientRect()
+
+  let collided = false
+
+  $('.tile').each((index, element)=> {
+    let tileBox = element.getBoundingClientRect()
+    
+    let overlap = playerBox.bottom > tileBox.top &&
+      playerBox.top < tileBox.bottom &&
+      playerBox.right > tileBox.left &&
+      playerBox.left < tileBox.right
+
+    if (!overlap) return
+
+
+    let falling = p.velocity > 0
+    let prevBottom = p.previousY + p.height
+    let wasAbove = prevBottom <= tileBox.top
+    console.log(
+      "Tile:", tileBox.top, tileBox.bottom, 
+      "Player:", playerBox.top, playerBox.bottom,
+      "vel:", p.velocity,
+      "falling:", falling,
+      "wasAbove:", wasAbove
+    );
+    if(falling && wasAbove) {
+    let inTileArea = playerBox.bottom - tileBox.top
+    p.y -= inTileArea
+    p.p.css('top', p.y + 'px')
+    p.velocity = 0
+    p.grounded = true
+    return
+    }
+  })
+
+  
+}
+
+
 class Player {
   constructor(x, y) {
+    this.grounded = true
+    this.gravity = .3
+    this.width = 60
+    this.height = 60
     this.y = y
     this.x = x
     this.p = $('<div class="player"></div>')
     $('.background').append(this.p)
+    this.velocity = 6
+    this.previousX = this.x
+    this.previousY = this.y
     this.frames = {
     up: [-7, -9],
     down: [-72, -105],
@@ -62,12 +109,18 @@ class Player {
     dead: [-71, 55]
     }
     this.setFrame('default')
+  } applyEffects() {
+    this.previousX = this.x
+    this.previousY = this.y
+    this.velocity += this.gravity
+    this.y += this.velocity
   } setFrame(name) {
     let frame = this.frames[name]
     this.p.css('background-position', `${frame[0]}px ${frame[1]}px`)
     this.p.css('transform', 'scaleX(1)')
   } jump() {
-    this.y += 25
+    this.velocity = -6
+    this.grounded = false
     this.setFrame('up')
   } moveRight() {
     this.setFrame('right')
@@ -80,7 +133,7 @@ class Player {
   } update() {
     this.p.css({
       left: this.x + 'px',
-      bottom: this.y + 'px'
+      top: this.y + 'px'
     })
   }
 }
@@ -102,3 +155,12 @@ document.addEventListener('keydown', (e) => {
 makeClock()
 createGround('.blocks')
 createIslands()
+
+var start = new Date
+setInterval(()=> {let speed = Math.floor((new Date - start) / 1000)
+  p.applyEffects()
+  p.update()
+  checkForCollision()
+
+}, 100)
+
