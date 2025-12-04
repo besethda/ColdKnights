@@ -37,22 +37,16 @@ const createFire = (topLayer) => {
   fireDiv.append('<img src="/images/campfire_centered.gif" class="fire"/>')
 }
 
-const renderPlayer = () => {
-  let 
-}
-
 const makeClock = () => {
   var start = new Date
   setInterval(()=> {
     let number = Math.floor((new Date - start) / 1000)
-    decreaseTime(number)
+    $('.cold-level').height(`${barHeight - (barHeight / 60) * number}`)
     number < 60 ? $('.timer').text(number) : $('.timer').text('')
   }, 1000)
 }
 
-const decreaseTime = (number) => {
-  $('.cold-level').height(`${barHeight - (barHeight / 60) * number}`)
-}
+function 
 
 makeClock()
 createGround('.blocks')
