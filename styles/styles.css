@@ -12,7 +12,7 @@ body, html {
 .background {
   overflow-y: hidden;
   height: 100%;
-  background-image: url(/images/background.jpg);
+  background-image: url(/image/background.jpg);
   background-size: cover;
   display: flex;
   flex-direction: column-reverse;
@@ -37,7 +37,7 @@ body, html {
   height: 16px;
   transform: scale(4);
   opacity: 0;
-  background-image: url("/images/world_tileset.png");
+  background-image: url("/image/world_tileset.png");
 }
 
 .floor {
@@ -65,7 +65,7 @@ body, html {
   height: 19px;
   image-rendering: crisp-edges;
   transform: scale(2.5);
-  background-image: url("/images/knight.png");
+  background-image: url("/image/knight.png");
 }
 
 .timer {
