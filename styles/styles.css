@@ -1,5 +1,6 @@
 * {
   box-sizing: border-box;
+  font-family: "Jacquard 12", system-ui;
 }
 
 body, html {
@@ -68,9 +69,9 @@ body, html {
 
 .timer {
   position: fixed;
-  top: 59px;
-  right: 30px;
-  font-size: 1.6rem;
+  top: 54px;
+  right: 36px;
+  font-size: 2.4rem;
   color: white;
 }
 

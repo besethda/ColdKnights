@@ -6,6 +6,7 @@ const barHeight = $('.cold-level').height()
 let tileList
 let tileMap
 let fireFound = false
+let gameFinished = false
 
 const randomNumber = (bottomRange, topRange) => {
   let number = Math.floor(Math.random() * (topRange - bottomRange + 1))
@@ -47,15 +48,46 @@ const makeClock = () => {
     $('.cold-level').height(`${barHeight - (barHeight / 30) * number}`)
     if (number < 30) {
       $('.timer').text(number)
-      gameOver()
     } else {
       $('.timer').text('')
+      gameOver()
     }
   }, 1000)
 }
 
-const gameOver = () => {
-  changeFrame(dead = true)
+const gameOver = (winLose) => {
+  if (winLose === 'win') {
+
+  } else {
+    changeFrame(true)
+    gameFinished = true
+    document.removeEventListener('keydown', keyDownEvents)
+    document.removeEventListener('keydown', keyUpEvents)
+  }
+}
+
+let lastHeight
+
+const changeFrame = (dead = false) => {
+  let currentHeight = p.y
+  if (dead === true || gameFinished === true) {
+    p.setFrame('dead')
+  } else {
+    if (p.grounded === true) {
+      p.setFrame('default')
+    } else if (currentHeight > lastHeight) {
+      p.setFrame('down')
+    }
+  }
+  lastHeight = currentHeight
+}
+
+const checkFireFound = () => {
+  let fire = $('.fire')[0]
+  let fireDimensions = fire.getBoundingClientRect()
+  if (p.box.width === fireDimensions.width) {
+    gameOver('win')
+  }
 }
 
 const checkForCollision = () => {
@@ -89,48 +121,26 @@ const checkForCollision = () => {
     p.grounded = true
     p.updateCSS()
     }})
-}
-
-let lastHeight
-
-const changeFrame = (dead = false) => {
-  let currentHeight = p.y
-  if (p.grounded === true) {
-    p.setFrame('default')
-  } else if (currentHeight > lastHeight) {
-    p.setFrame('down')
   }
-  lastHeight = currentHeight
-  if (dead === true) {
-    p.setFrame('dead')
-  }
-}
-
-const checkFireFound = () => {
-  let fire = $('.fire')[0]
-  let fireDimensions = fire.getBoundingClientRect()
-  if (p.box.)
-}
-
 
 class Player {
   constructor(x, y) {
     this.x = x
     this.y = y
     this.grounded = false
-    this.gravity = 1
+    this.gravity = .3
     this.p = $('<div class="player"></div>')
     $('.background').append(this.p)
     this.width = this.p[0].getBoundingClientRect().width
     this.height = this.p[0].getBoundingClientRect().height
-    this.velocityY = .3
+    this.velocityY = 0
     this.updateCSS()
     this.frames = {
     up: [-9, -9],
     down: [-72, -105],
     default: [-41, 24],
     right: [-41, -104],
-    dead: [-71, 55]
+    dead: [-72, 55]
     }
     this.setFrame('default')
   }
@@ -149,47 +159,55 @@ class Player {
     this.p.css('background-position', `${frame[0]}px ${frame[1]}px`)
   } jump() {
     if(this.grounded) {
-      this.velocityY = -20
+      this.velocityY = -12
       this.grounded = false
       this.setFrame('up')
     }
   } moveRight() {
     this.setFrame('right')
     this.p.css('transform', 'scale(4)')
-    this.x += 10
+    this.x += 7
     this.updateCSS()
   } moveLeft() {
     this.setFrame('right')
     this.p.css('transform', 'scale(-4, 4)')
-    this.x -= 10
+    this.x -= 7
     this.updateCSS()
   } die() {
     this.setFrame('dead')
   }
   }
 
-let startingY = (($(window).height()- 140) / 4)
-let p = new Player(2, (0))
+let startingY = ($(window).height()- (tileHeight + 64))
+console.log(startingY)
+let p = new Player(30, startingY)
 
-document.addEventListener('keydown', (e) => {
-  if (e.code === 'Space') {
-    p.jump() 
-  } else if (e.code === 'ArrowRight') {
-    p.moveRight()
-  } else if (e.code === 'ArrowLeft') {
-    p.moveLeft()  
-  }
-})
+const keys = { left: false, right: false, space: false}
+
+const keyDownEvents = (e) => {
+  if (e.code === 'Space') {p.jump()
+  } else if (e.code === 'ArrowRight') {keys.right = true
+  } else if (e.code === 'ArrowLeft') {keys.left = true 
+  }}
+
+const keyUpEvents = (e) => {
+  if (e.code === 'ArrowRight') {keys.right = false
+  } else if (e.code === 'ArrowLeft') {keys.left = false 
+  }}
 
 makeClock()
 createGround('.blocks')
 createIslands()
 p.moveRight()
+document.addEventListener('keydown', keyDownEvents)
+document.addEventListener('keyup', keyUpEvents)
 
 var start = new Date
 setInterval(()=> {let speed = Math.floor((new Date - start) / 1000)
+  if (keys.left) p.moveLeft()
+  if (keys.right) p.moveRight()
   p.applyGravity()
   checkForCollision()
   changeFrame()
-}, 20)
+}, 10)
 
