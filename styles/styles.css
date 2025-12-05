@@ -9,6 +9,7 @@ body, html {
 }
 
 .background {
+  overflow-y: hidden;
   height: 100%;
   background-image: url(/images/background.jpg);
   display: flex;
@@ -17,26 +18,32 @@ body, html {
 
 .blocks {
   display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
 }
 
 .tile {
   width: 16px;
   height: 16px;
+  transform: scale(4);
   image-rendering: crisp-edges;
-  zoom: 400%;
   background-image: url("/images/world_tileset.png");
 }
 
 .empty-tile {
   width: 16px;
   height: 16px;
-  zoom: 400%;
+  transform: scale(4);
+  opacity: 0;
   background-image: url("/images/world_tileset.png");
 }
 
 .floor {
   height: 64px;
+  width: 100%;
   display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
   margin-bottom: 12vh;
 }
 
@@ -49,12 +56,13 @@ body, html {
 }
 
 .player {
+  z-index: 200;
   position: absolute;
   background-position: -41px 24px;
-  width: 15px;
+  width: 13px;
   height: 19px;
   image-rendering: crisp-edges;
-  zoom: 400%;
+  transform: scale(2.5);
   background-image: url("/images/knight.png");
 }
 
@@ -67,6 +75,7 @@ body, html {
 }
 
 .cold-bar {
+  z-index: 100;
   position: fixed;
   display: flex;
   flex-direction: column-reverse;

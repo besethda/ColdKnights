@@ -1,10 +1,11 @@
-let tileWidth = 16
-let tileHeight = 16
-let renderedTileWidth = tileWidth * 4
+let tileWidth = 64
+let tileHeight =64
+let renderedTileWidth = tileWidth
 let width = $(window).width()
 const barHeight = $('.cold-level').height()
 let tileList
 let tileMap
+let fireFound = false
 
 const randomNumber = (bottomRange, topRange) => {
   let number = Math.floor(Math.random() * (topRange - bottomRange + 1))
@@ -43,103 +44,132 @@ const makeClock = () => {
   var start = new Date
   setInterval(()=> {
     let number = Math.floor((new Date - start) / 1000)
-    $('.cold-level').height(`${barHeight - (barHeight / 60) * number}`)
-    number < 60 ? $('.timer').text(number) : $('.timer').text('')
+    $('.cold-level').height(`${barHeight - (barHeight / 30) * number}`)
+    if (number < 30) {
+      $('.timer').text(number)
+      gameOver()
+    } else {
+      $('.timer').text('')
+    }
   }, 1000)
 }
 
-const checkForCollision = () => {
-  let playerBox = p.p[0].getBoundingClientRect()
+const gameOver = () => {
+  changeFrame(dead = true)
+}
 
-  let collided = false
+const checkForCollision = () => {
+  p.grounded = false
+  let playerBox = p.box
 
   $('.tile').each((index, element)=> {
     let tileBox = element.getBoundingClientRect()
+    let backgroundBox = $('.background')[0].getBoundingClientRect()
+
+    let tileTop = tileBox.top -backgroundBox.top
+    let tileBottom = tileBox.bottom -backgroundBox.top
+    let tileLeft = tileBox.left -backgroundBox.left
+    let tileRight = tileBox.right -backgroundBox.left
+
+    let playerLeft = p.x
+    let playerRight = p.x + p.width
+    let playerTop = p.y
+    let playerBottom = p.y + p.height
+
+    let horizontalAlign = playerRight > tileLeft && playerLeft < tileRight;
+    if (!horizontalAlign) return
+
+    let nextBottom = playerBottom + p.velocityY
+
+    const verticalAlign = playerBottom <= tileTop && nextBottom >= tileTop
     
-    let overlap = playerBox.bottom > tileBox.top &&
-      playerBox.top < tileBox.bottom &&
-      playerBox.right > tileBox.left &&
-      playerBox.left < tileBox.right
-
-    if (!overlap) return
-
-
-    let falling = p.velocity > 0
-    let prevBottom = p.previousY + p.height
-    let wasAbove = prevBottom <= tileBox.top
-    console.log(
-      "Tile:", tileBox.top, tileBox.bottom, 
-      "Player:", playerBox.top, playerBox.bottom,
-      "vel:", p.velocity,
-      "falling:", falling,
-      "wasAbove:", wasAbove
-    );
-    if(falling && wasAbove) {
-    let inTileArea = playerBox.bottom - tileBox.top
-    p.y -= inTileArea
-    p.p.css('top', p.y + 'px')
-    p.velocity = 0
+    if(verticalAlign) {
+    p.y = tileTop -p.height
+    p.velocityY = 0
     p.grounded = true
-    return
-    }
-  })
+    p.updateCSS()
+    }})
+}
 
-  
+let lastHeight
+
+const changeFrame = (dead = false) => {
+  let currentHeight = p.y
+  if (p.grounded === true) {
+    p.setFrame('default')
+  } else if (currentHeight > lastHeight) {
+    p.setFrame('down')
+  }
+  lastHeight = currentHeight
+  if (dead === true) {
+    p.setFrame('dead')
+  }
+}
+
+const checkFireFound = () => {
+  let fire = $('.fire')[0]
+  let fireDimensions = fire.getBoundingClientRect()
+  if (p.box.)
 }
 
 
 class Player {
   constructor(x, y) {
-    this.grounded = true
-    this.gravity = .3
-    this.width = 60
-    this.height = 60
-    this.y = y
     this.x = x
+    this.y = y
+    this.grounded = false
+    this.gravity = 1
     this.p = $('<div class="player"></div>')
     $('.background').append(this.p)
-    this.velocity = 6
-    this.previousX = this.x
-    this.previousY = this.y
+    this.width = this.p[0].getBoundingClientRect().width
+    this.height = this.p[0].getBoundingClientRect().height
+    this.velocityY = .3
+    this.updateCSS()
     this.frames = {
-    up: [-7, -9],
+    up: [-9, -9],
     down: [-72, -105],
     default: [-41, 24],
-    right: [-40, -104],
+    right: [-41, -104],
     dead: [-71, 55]
     }
     this.setFrame('default')
-  } applyEffects() {
-    this.previousX = this.x
-    this.previousY = this.y
-    this.velocity += this.gravity
-    this.y += this.velocity
+  }
+    updateCSS() {
+      this.p.css({ left: this.x + 'px', top: this.y + 'px'})
+  } get box() {
+    return this.p[0].getBoundingClientRect()
+  } applyGravity() {
+    if (!this.grounded) {
+      this.velocityY += this.gravity
+      this.y += this.velocityY
+      this.updateCSS()
+    }
   } setFrame(name) {
     let frame = this.frames[name]
     this.p.css('background-position', `${frame[0]}px ${frame[1]}px`)
-    this.p.css('transform', 'scaleX(1)')
   } jump() {
-    this.velocity = -6
-    this.grounded = false
-    this.setFrame('up')
+    if(this.grounded) {
+      this.velocityY = -20
+      this.grounded = false
+      this.setFrame('up')
+    }
   } moveRight() {
     this.setFrame('right')
-    this.x += 4
+    this.p.css('transform', 'scale(4)')
+    this.x += 10
+    this.updateCSS()
   } moveLeft() {
-    this.p.css('transform', 'scaleX(-1)')
-    this.x -= 4
+    this.setFrame('right')
+    this.p.css('transform', 'scale(-4, 4)')
+    this.x -= 10
+    this.updateCSS()
   } die() {
     this.setFrame('dead')
-  } update() {
-    this.p.css({
-      left: this.x + 'px',
-      top: this.y + 'px'
-    })
   }
-}
-  
-let p = new Player(16, 16)
-p.update()
+  }
+
+let startingY = (($(window).height()- 140) / 4)
+let p = new Player(2, (0))
 
 document.addEventListener('keydown', (e) => {
   if (e.code === 'Space') {
@@ -149,18 +179,17 @@ document.addEventListener('keydown', (e) => {
   } else if (e.code === 'ArrowLeft') {
     p.moveLeft()  
   }
-  p.update()
 })
 
 makeClock()
 createGround('.blocks')
 createIslands()
+p.moveRight()
 
 var start = new Date
 setInterval(()=> {let speed = Math.floor((new Date - start) / 1000)
-  p.applyEffects()
-  p.update()
+  p.applyGravity()
   checkForCollision()
-
-}, 100)
+  changeFrame()
+}, 20)
 
