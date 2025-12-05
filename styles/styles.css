@@ -37,7 +37,7 @@ body, html {
   height: 16px;
   transform: scale(4);
   opacity: 0;
-  background-image: url("/image/world_tileset.png");
+  background-image: url("/image/world-tileset.png");
 }
 
 .floor {
