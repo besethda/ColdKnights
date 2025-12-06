@@ -126,6 +126,11 @@ const checkFireFound = () => {
   if (verticalTouch && horizontalTouch) {
     gameOver(true)
   }
+
+  if (p.box.top > $(window).height()) {
+    console.log('true')
+    gameOver()
+  }
 }
 
 const checkForCollision = () => {
@@ -139,6 +144,7 @@ const checkForCollision = () => {
     let tileLeft = tileBox.left - backgroundBox.left
     let tileRight = tileBox.right - backgroundBox.left
 
+    let playerTop = p.y
     let playerLeft = p.x
     let playerRight = p.x + p.width
     let playerBottom = p.y + p.height
