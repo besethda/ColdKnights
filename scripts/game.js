@@ -5,8 +5,10 @@ let width = $(window).width()
 const barHeight = $('.cold-level').height()
 let tileList
 let tileMap
+const keys = { left: false, right: false, space: false}
 let fireFound = false
-let gameFinished = false
+let gameFinished = true
+let p
 
 const randomNumber = (bottomRange, topRange) => {
   let number = Math.floor(Math.random() * (topRange - bottomRange + 1))
@@ -38,29 +40,31 @@ const createIslands = () => {
 const createFire = (topLayer) => {
   let layerList = $(`.layer${topLayer} .tile`)
   let fireDiv = $(layerList[randomNumber(0, layerList.length-1)])
-  fireDiv.append('<img src="/images/campfire_centered.gif" class="fire"/>')
+  fireDiv.append('<img src="/public/images/campfire_centered.gif" class="fire"/>')
 }
 
-const makeClock = () => {
+const makeClock = (gameStopped = false) => {
   var start = new Date
-  setInterval(()=> {
-    let number = Math.floor((new Date - start) / 1000)
-    $('.cold-level').height(`${barHeight - (barHeight / 30) * number}`)
-    if (number < 30) {
-      $('.timer').text(number)
-    } else {
-      $('.timer').text('')
-      gameOver()
+  const timer = setInterval(()=> {
+    if (gameFinished === false) {
+      let number = Math.floor((new Date - start) / 1000)
+      $('.cold-level').height(`${barHeight - (barHeight / 30) * number}`)
+      if (number < 30) {
+        $('.timer').text(number)
+      } else {
+        $('.timer').text('')
+        gameOver()
+      }
     }
   }, 1000)
 }
 
 const gameOver = (winLose) => {
+  gameFinished = true
   if (winLose === 'win') {
-
+    clearInterval(gameLoop)
   } else {
     changeFrame(true)
-    gameFinished = true
     document.removeEventListener('keydown', keyDownEvents)
     document.removeEventListener('keydown', keyUpEvents)
   }
@@ -85,9 +89,16 @@ const changeFrame = (dead = false) => {
 const checkFireFound = () => {
   let fire = $('.fire')[0]
   let fireDimensions = fire.getBoundingClientRect()
-  if (p.box.width === fireDimensions.width) {
-    gameOver('win')
-  }
+  let horizontalTouch = 
+    p.box.left < fireDimensions.right&&
+    p.box.right > fireDimensions.left
+
+  let verticalTouch =
+  p.box.bottom >= fireDimensions.top&&
+  p.box.top <= fireDimensions.bottom
+  
+  if (verticalTouch && horizontalTouch) {
+    gameOver('win')}
 }
 
 const checkForCollision = () => {
@@ -123,6 +134,28 @@ const checkForCollision = () => {
     }})
   }
 
+const startGame = () =>{
+  $('.cold-bar').css('display', 'flex')
+  let startingY = ($(window).height()- (tileHeight + 64))
+  p = new Player(30, startingY)
+  const keyDownEvents = (e) => {
+    if (e.code === 'Space') {p.jump()
+    } else if (e.code === 'ArrowRight') {keys.right = true
+    } else if (e.code === 'ArrowLeft') {keys.left = true 
+    }}
+  const keyUpEvents = (e) => {
+    if (e.code === 'ArrowRight') {keys.right = false
+    } else if (e.code === 'ArrowLeft') {keys.left = false 
+    }}
+
+  makeClock()
+  createGround('.blocks')
+  createIslands()
+  p.moveRight()
+  document.addEventListener('keydown', keyDownEvents)
+  document.addEventListener('keyup', keyUpEvents)
+}
+
 class Player {
   constructor(x, y) {
     this.x = x
@@ -137,7 +170,7 @@ class Player {
     this.updateCSS()
     this.frames = {
     up: [-9, -9],
-    down: [-72, -105],
+    down: [-73, -105],
     default: [-41, 24],
     right: [-41, -104],
     dead: [-72, 55]
@@ -178,36 +211,21 @@ class Player {
   }
   }
 
-let startingY = ($(window).height()- (tileHeight + 64))
-console.log(startingY)
-let p = new Player(30, startingY)
-
-const keys = { left: false, right: false, space: false}
-
-const keyDownEvents = (e) => {
-  if (e.code === 'Space') {p.jump()
-  } else if (e.code === 'ArrowRight') {keys.right = true
-  } else if (e.code === 'ArrowLeft') {keys.left = true 
-  }}
-
-const keyUpEvents = (e) => {
-  if (e.code === 'ArrowRight') {keys.right = false
-  } else if (e.code === 'ArrowLeft') {keys.left = false 
-  }}
-
-makeClock()
-createGround('.blocks')
-createIslands()
-p.moveRight()
-document.addEventListener('keydown', keyDownEvents)
-document.addEventListener('keyup', keyUpEvents)
-
 var start = new Date
-setInterval(()=> {let speed = Math.floor((new Date - start) / 1000)
-  if (keys.left) p.moveLeft()
-  if (keys.right) p.moveRight()
-  p.applyGravity()
-  checkForCollision()
-  changeFrame()
-}, 10)
+const gameLoop = setInterval(()=> {
+  if (gameFinished === false){
+    let speed = Math.floor((new Date - start) / 1000)
+    if (keys.left) p.moveLeft()
+    if (keys.right) p.moveRight()
+    p.applyGravity()
+    checkForCollision()
+    changeFrame()
+    checkFireFound()
+  }}, 10)
 
+  let menu = $('.menu')
+  menu.css('display', 'flex')
+  menu.click(()=> {gameFinished = false 
+    startGame()
+    menu.css('display', 'none')
+  })
