@@ -35,11 +35,17 @@ body, html {
   align-items: center;
 }
 
-.header{
+.header,
+.result{
   text-align: center;
 }
 
-.start {
+.time{
+  font-size: 2.1rem;
+}
+
+.start,
+.replay {
   width: 70%;
   height: 30%;
   background-color: white;
@@ -49,12 +55,14 @@ body, html {
   transition: .3s all;
 }
 
-.start:hover {
+.start:hover,
+.replay:hover {
   background-color: rgb(78, 78, 216);
   color: white;
 }
 
-.start:active{
+.start:active,
+.replay:hover {
   transform: scale(.95);
 }
 
