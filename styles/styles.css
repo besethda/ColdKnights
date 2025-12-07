@@ -146,15 +146,6 @@ body, html {
   height: 100%;
 }
 
-@keyframes tremble {
-  from {
-    transform: translateY(3px);
-  }
-  to {
-    transform: translateY(-3px);
-  }
-}
-
 @media (orientation: portrait) {
   .menu,
   .win-lose {

@@ -47,6 +47,7 @@ const createFire = (topLayer) => {
 
 const makeClock = () => {
   let barHeight = $('.cold-level').height()
+  $('.timer').css('color', 'white')
   let start = new Date
   timer = setInterval(() => {
     if (gameFinished === false) {
@@ -56,7 +57,6 @@ const makeClock = () => {
         $('.timer').text(number)
         if (number > 25) {
           $('.timer').css('color', 'red')
-          $('.timer').css('animation-name', 'tremble')
         }
       } else {
         $('.timer').text('')
