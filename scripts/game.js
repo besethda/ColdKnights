@@ -47,7 +47,6 @@ const createFire = (topLayer) => {
 
 const makeClock = () => {
   let barHeight = $('.cold-level').height()
-  $('cold-level').css('height', '100%')
   let start = new Date
   timer = setInterval(() => {
     if (gameFinished === false) {
@@ -55,6 +54,10 @@ const makeClock = () => {
       $('.cold-level').height(`${barHeight - (barHeight / 30) * number}`)
       if (number < 30) {
         $('.timer').text(number)
+        if (number > 25) {
+          $('.timer').css('color', 'red')
+          $('.timer').css('animation-name', 'tremble')
+        }
       } else {
         $('.timer').text('')
         gameOver(false)
@@ -67,17 +70,36 @@ const gameOver = (winLose) => {
   console.log('gamefinished')
   gameFinished = true
   if (winLose) {
-    clearInterval(gameLoop)
   } else {
     changeFrame(true)
-    clearInterval(gameLoop)
   }
+  removeTiles()
+  clearInterval(gameLoop)
   let time = $('.timer').text()
   showResult(winLose, time)
-  $('.background').empty()
+  $('.timer').text('')
   $('.cold-bar').css('display', 'none')
-  p.delete()
   clearInterval(timer)
+}
+
+const removeTiles = () => {
+  let fire = $('.fire')[0]
+  let fireDimensions = fire.getBoundingClientRect()
+  let tiles = $('.tile')
+  tiles.each((index, element) =>{
+    let currentTile = element.getBoundingClientRect()
+    let horizontalTouch =
+    currentTile.left < fireDimensions.right &&
+    currentTile.right > fireDimensions.left
+
+  let verticalTouch =
+    currentTile.bottom >= fireDimensions.top &&
+    currentTile.top <= fireDimensions.bottom
+
+  if (verticalTouch && horizontalTouch) {
+  } else {
+    element.remove()
+  }})
 }
 
 const showResult = (winLose, time) => {
@@ -88,7 +110,11 @@ const showResult = (winLose, time) => {
   winLose ? $('result').css('color', 'white') : $('result').css('color', 'red')
   winLose ? $('.time').text(`Your time was ${time} seconds!`) : $('.time').text('')
   document.querySelector('.replay').addEventListener('click', ()=> {
+    p.delete()
+    $('.background').empty()
     $('.win-lose').css('display', 'none')
+    $('.cold-level').css('height', '100%')
+    console.log('reset the height')
     startGame()
     fireFound = false
     gameFinished = false

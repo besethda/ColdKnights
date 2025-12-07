@@ -42,6 +42,7 @@ body, html {
 
 .time{
   font-size: 2.1rem;
+  text-align: center;
 }
 
 .start,
@@ -117,11 +118,14 @@ body, html {
 }
 
 .timer {
+  z-index: 10;
   position: fixed;
   top: 54px;
   right: 36px;
   font-size: 2.4rem;
   color: white;
+  animation-duration: 3s;
+  animation-timing-function: linear;
 }
 
 .cold-bar {
@@ -140,4 +144,28 @@ body, html {
 .cold-level {
   background-color: rgba(114, 175, 255, 0.81);
   height: 100%;
+}
+
+@keyframes tremble {
+  from {
+    transform: translateY(3px);
+  }
+  to {
+    transform: translateY(-3px);
+  }
+}
+
+@media (orientation: portrait) {
+  .menu,
+  .win-lose {
+    width: 70%;
+    height: 40%;
+    top: 25%;
+    margin-left: 15%;
+  }
+
+  .start,
+  .replay {
+    height: 20%;
+  }
 }
