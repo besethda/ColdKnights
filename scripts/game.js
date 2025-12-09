@@ -10,6 +10,8 @@ const keys = { left: false, right: false, space: false }
 let fireFound = false
 let gameFinished = true
 let p
+let b
+let birdFlap
 
 const randomNumber = (bottomRange, topRange) => {
   let number = Math.floor(Math.random() * (topRange - bottomRange + 1))
@@ -86,20 +88,21 @@ const removeTiles = () => {
   let fire = $('.fire')[0]
   let fireDimensions = fire.getBoundingClientRect()
   let tiles = $('.tile')
-  tiles.each((index, element) =>{
+  tiles.each((index, element) => {
     let currentTile = element.getBoundingClientRect()
     let horizontalTouch =
-    currentTile.left < fireDimensions.right &&
-    currentTile.right > fireDimensions.left
+      currentTile.left < fireDimensions.right &&
+      currentTile.right > fireDimensions.left
 
-  let verticalTouch =
-    currentTile.bottom >= fireDimensions.top &&
-    currentTile.top <= fireDimensions.bottom
+    let verticalTouch =
+      currentTile.bottom >= fireDimensions.top &&
+      currentTile.top <= fireDimensions.bottom
 
-  if (verticalTouch && horizontalTouch) {
-  } else {
-    element.remove()
-  }})
+    if (verticalTouch && horizontalTouch) {
+    } else {
+      element.remove()
+    }
+  })
 }
 
 const showResult = (winLose, time) => {
@@ -109,7 +112,7 @@ const showResult = (winLose, time) => {
   $('.result').text(result)
   winLose ? $('result').css('color', 'white') : $('result').css('color', 'red')
   winLose ? $('.time').text(`Your time was ${time} seconds!`) : $('.time').text('')
-  document.querySelector('.replay').addEventListener('click', ()=> {
+  document.querySelector('.replay').addEventListener('click', () => {
     p.delete()
     $('.background').empty()
     $('.win-lose').css('display', 'none')
@@ -119,7 +122,7 @@ const showResult = (winLose, time) => {
     fireFound = false
     gameFinished = false
     startLoop()
-  }, {once:true} ) 
+  }, { once: true })
 }
 
 let lastHeight
@@ -262,16 +265,16 @@ class Player {
 const startLoop = () => {
   let start = new Date
   gameLoop = setInterval(() => {
-  if (gameFinished === false) {
-    let speed = Math.floor((new Date - start) / 1000)
-    if (keys.left) p.moveLeft()
-    if (keys.right) p.moveRight()
-    p.applyGravity()
-    checkForCollision()
-    changeFrame()
-    checkFireFound()
-  }
-}, 10)
+    if (gameFinished === false) {
+      let speed = Math.floor((new Date - start) / 1000)
+      if (keys.left) p.moveLeft()
+      if (keys.right) p.moveRight()
+      p.applyGravity()
+      checkForCollision()
+      changeFrame()
+      checkFireFound()
+    }
+  }, 10)
 }
 
 const keyDownEvents = (e) => {
