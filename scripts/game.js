@@ -44,7 +44,7 @@ const createIslands = () => {
 const createFire = (topLayer) => {
   let layerList = $(`.layer${topLayer} .tile`)
   let fireDiv = $(layerList[randomNumber(0, layerList.length - 1)])
-  fireDiv.append('<img src="/public/images/campfire_centered.gif" class="fire"/>')
+  fireDiv.append('<img src="../public/images/campfire_centered.gif" class="fire"/>')
 }
 
 const makeClock = () => {
@@ -69,7 +69,6 @@ const makeClock = () => {
 }
 
 const gameOver = (winLose) => {
-  console.log('gamefinished')
   gameFinished = true
   if (winLose) {
   } else {
@@ -117,7 +116,6 @@ const showResult = (winLose, time) => {
     $('.background').empty()
     $('.win-lose').css('display', 'none')
     $('.cold-level').css('height', '100%')
-    console.log('reset the height')
     startGame()
     fireFound = false
     gameFinished = false
@@ -157,7 +155,6 @@ const checkFireFound = () => {
   }
 
   if (p.box.top > $(window).height()) {
-    console.log('true')
     gameOver()
   }
 }
