@@ -15,19 +15,8 @@ Cold Knights is a small browser platform game. Guide the knight across the float
 4. Open [http://localhost:8000](http://localhost:8000) in a browser.
 5. Click **Start** to begin.
 
-## Controls
-
-| Key         | Action     |
-| ----------- | ---------- |
-| Left Arrow  | Move left  |
-| Right Arrow | Move right |
-| Space       | Jump       |
-
 ## Objective
-
-- Reach the campfire to win.
-- Avoid falling from the platforms.
-- Finish within 30 seconds, before the cold meter runs out.
+You are a knight who is freezing, and needs to get to the campfire to warm up. Use the arrow keys to make it to the campfire before the timer runs out.
 
 ## Project Structure
 
