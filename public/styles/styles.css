@@ -12,7 +12,7 @@ body, html {
 .background {
   overflow-y: hidden;
   height: 100%;
-  background-image: url("../public/images/background.jpg");
+  background-image: url("../images/background.jpg");
   background-size: cover;
   display: flex;
   flex-direction: column-reverse;
@@ -78,7 +78,7 @@ body, html {
   height: 16px;
   transform: scale(4);
   image-rendering: crisp-edges;
-  background-image: url("../public/images/world-tileset.png");
+  background-image: url("../images/world-tileset.png");
 }
 
 .empty-tile {
@@ -86,7 +86,7 @@ body, html {
   height: 16px;
   transform: scale(4);
   opacity: 0;
-  background-image: url("../public/images/world-tileset.png");
+  background-image: url("../images/world-tileset.png");
 }
 
 .floor {
@@ -114,7 +114,7 @@ body, html {
   height: 19px;
   image-rendering: crisp-edges;
   transform: scale(2.5);
-  background-image: url("../public/images/knight.png");
+  background-image: url("../images/knight.png");
 }
 
 
